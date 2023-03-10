@@ -166,7 +166,7 @@ export class ChatGPTAPI {
     if (!!preCheckHook && !preCheckHook(numTokens)) {
       return Promise.reject(
         new Error(
-          `ChatGPT error 403: Precheck hook on number of tokens allowed failed.`
+          `ChatGPT error 403: You have exceed maximum token usage, please sponsor. | 您的token使用量已超限，可前往「设置-赞助」获取tokens`
         )
       )
     }
