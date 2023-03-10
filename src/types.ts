@@ -40,6 +40,8 @@ export type SendMessageOptions = {
   stream?: boolean
   systemMessage?: string
   timeoutMs?: number
+  preCheckHook?: (numTokens: number, props?: any) => boolean
+  postProcessHook?: (numTokens: number, props?: any) => void
   onProgress?: (partialResponse: ChatMessage) => void
   abortSignal?: AbortSignal
 }

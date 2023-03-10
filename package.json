@@ -1,5 +1,5 @@
 {
-  "name": "chatgpt",
+  "name": "@qidian99/chatgpt",
   "version": "5.0.9",
   "description": "Node.js client for the official ChatGPT API.",
   "author": "Travis Fischer <travis@transitivebullsh.it>",
@@ -26,7 +26,7 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
-    "clean": "del build",
+    "clean": "rm -rf build",
     "prebuild": "run-s clean",
     "predev": "run-s clean",
     "pretest": "run-s build",

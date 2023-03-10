@@ -136,6 +136,8 @@ export class ChatGPTAPI {
       parentMessageId,
       messageId = uuidv4(),
       timeoutMs,
+      preCheckHook,
+      postProcessHook,
       onProgress,
       stream = onProgress ? true : false
     } = opts
@@ -160,6 +162,14 @@ export class ChatGPTAPI {
       text,
       opts
     )
+
+    if (!!preCheckHook && !preCheckHook(numTokens)) {
+      return Promise.reject(
+        new Error(
+          `ChatGPT error 403: Precheck hook on number of tokens allowed failed.`
+        )
+      )
+    }
 
     const result: types.ChatMessage = {
       role: 'assistant',
@@ -194,9 +204,13 @@ export class ChatGPTAPI {
               headers,
               body: JSON.stringify(body),
               signal: abortSignal,
-              onMessage: (data: string) => {
+              onMessage: async (data: string) => {
                 if (data === '[DONE]') {
                   result.text = result.text.trim()
+                  if (postProcessHook) {
+                    postProcessHook(await this._getTokenCount(result.text))
+                  }
+
                   return resolve(result)
                 }
 
