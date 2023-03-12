@@ -3,9 +3,13 @@ import Keyv from 'keyv'
 export type Role = 'user' | 'assistant' | 'system'
 
 export type FetchFn = typeof fetch
-
+export type TokenSpec = {
+  apiKey: string
+  remainingUses: number
+}
 export type ChatGPTAPIOptions = {
   apiKey: string
+  apiKeys?: string[]
 
   /** @defaultValue `'https://api.openai.com'` **/
   apiBaseUrl?: string
@@ -40,8 +44,8 @@ export type SendMessageOptions = {
   stream?: boolean
   systemMessage?: string
   timeoutMs?: number
-  preCheckHook?: (numTokens: number, props?: any) => boolean
-  postProcessHook?: (numTokens: number, props?: any) => void
+  preCheckHooks?: Array<(numTokens: number, props?: any) => boolean>
+  postProcessHooks?: Array<(numTokens: number, props?: any) => void>
   onProgress?: (partialResponse: ChatMessage) => void
   abortSignal?: AbortSignal
 }

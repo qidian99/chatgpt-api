@@ -136,8 +136,8 @@ export class ChatGPTAPI {
       parentMessageId,
       messageId = uuidv4(),
       timeoutMs,
-      preCheckHook,
-      postProcessHook,
+      preCheckHooks,
+      postProcessHooks,
       onProgress,
       stream = onProgress ? true : false
     } = opts
@@ -163,12 +163,16 @@ export class ChatGPTAPI {
       opts
     )
 
-    if (!!preCheckHook && !preCheckHook(numTokens)) {
-      return Promise.reject(
-        new Error(
-          `ChatGPT error 403: You have exceed maximum token usage, please sponsor. | 您的token使用量已超限，可前往「设置-赞助」获取tokens`
-        )
-      )
+    if (preCheckHooks) {
+      for (let i = 0; i < preCheckHooks.length; ++i) {
+        const preCheckHook = preCheckHooks[i]
+        if (!preCheckHook(numTokens))
+          return Promise.reject(
+            new Error(
+              `ChatGPT error 403: You have exceed maximum token usage, please sponsor. | 您的token使用量已超限，可前往「设置-赞助」获取tokens`
+            )
+          )
+      }
     }
 
     const result: types.ChatMessage = {
@@ -207,8 +211,11 @@ export class ChatGPTAPI {
               onMessage: async (data: string) => {
                 if (data === '[DONE]') {
                   result.text = result.text.trim()
-                  if (postProcessHook) {
-                    postProcessHook(await this._getTokenCount(result.text))
+                  if (postProcessHooks) {
+                    const tokenCount = await this._getTokenCount(result.text)
+                    postProcessHooks.forEach(async (postProcessHook) =>
+                      postProcessHook(tokenCount)
+                    )
                   }
 
                   return resolve(result)

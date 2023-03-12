@@ -26,7 +26,7 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
-    "clean": "rm -rf build",
+    "clean": "del build",
     "prebuild": "run-s clean",
     "predev": "run-s clean",
     "pretest": "run-s build",
@@ -38,6 +38,7 @@
   },
   "dependencies": {
     "@dqbd/tiktoken": "^0.4.0",
+    "@qidian99/chatgpt": "^5.0.11",
     "cac": "^6.7.14",
     "conf": "^11.0.1",
     "eventsource-parser": "^0.0.5",
