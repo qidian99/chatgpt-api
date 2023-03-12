@@ -119,6 +119,9 @@ export class ChatGPTPool extends ChatGPTAPI implements TokenPooling {
 
   // Implement the TokenPooling interface methods
   addToken(token: string): TokenInfo {
+    if (this.tokens.find((t) => t.token === token)) {
+      throw new Error('Duplicate token | 密钥重复')
+    }
     const id = this.tokens.length + 1
     const newToken: TokenInfo = { id, token }
     this.tokens.push(newToken)
